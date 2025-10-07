@@ -1,0 +1,14 @@
+name: Mysty
+version: '0.1'
+main: me.deadybbb.mysty.Mysty
+api-version: '1.21'
+authors: [ Ybbb ]
+prefix: Misty
+dependencies:
+  server:
+    YBMJ:
+      load: BEFORE
+      required: true
+    CustomZones:
+      load: BEFORE
+      required: true
