@@ -30,14 +30,14 @@ public class CompassNoiseListener implements Listener {
     @EventHandler
     public void onZoneEnter(ZoneEnterEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        boolean isCompass = false;
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item != null && item.getType() == Material.COMPASS) {
-                isCompass = true;
-                break;
-            }
-        }
-        if (!isCompass) return;
+//        boolean isCompass = false;
+//        for (ItemStack item : player.getInventory().getContents()) {
+//            if (item != null && item.getType() == Material.COMPASS) {
+//                isCompass = true;
+//                break;
+//            }
+//        }
+//        if (!isCompass) return;
 
         UUID uuid = player.getUniqueId();
         Location basic = player.getCompassTarget();
