@@ -17,6 +17,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly(files("./libs/YBMJ-0.1.1.jar"))
     compileOnly(files("./libs/CustomZones-0.1.jar"))
+    compileOnly(files("./libs/CompassTargets-0.1.1.jar"))
 }
 
 def targetJavaVersion = 21

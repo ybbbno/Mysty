@@ -9,7 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Random;
 
 public class CompassTargetManager {
-    private final double INTERPOLATION_SPEED = 0.02;
+    private double INTERPOLATION_SPEED = 0.02;
     private final long INTERPOLATION_INTERVAL = 1L;
     private final long TARGET_UPDATE_INTERVAL = 4L;
 
@@ -40,6 +40,7 @@ public class CompassTargetManager {
         if (interpolationTask != null) {
             isStop = true;
             finalLocation = basicLocation;
+            INTERPOLATION_SPEED += 0.2;
 //            interpolationTask.cancel();
 //            interpolationTask = null;
         }
@@ -67,6 +68,7 @@ public class CompassTargetManager {
                 player.setCompassTarget(currentLocation);
 
                 if (isStop && currentLocation.distance(finalLocation) < 0.1) {
+                    INTERPOLATION_SPEED -= 0.2;
                     cancel();
                     return;
                 }

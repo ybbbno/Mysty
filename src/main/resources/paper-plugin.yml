@@ -12,3 +12,6 @@ dependencies:
     CustomZones:
       load: BEFORE
       required: true
+    CompassTargets:
+      load: BEFORE
+      required: true

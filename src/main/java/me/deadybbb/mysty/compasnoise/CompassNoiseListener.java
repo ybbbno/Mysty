@@ -1,5 +1,7 @@
 package me.deadybbb.mysty.compasnoise;
 
+import me.deadybbb.compasstargets.CompassMode;
+import me.deadybbb.compasstargets.CompassTargets;
 import me.deadybbb.customzones.events.ZoneEnterEvent;
 import me.deadybbb.customzones.events.ZoneExitEvent;
 import me.deadybbb.customzones.events.ZoneStayEvent;
@@ -30,6 +32,8 @@ public class CompassNoiseListener implements Listener {
     @EventHandler
     public void onZoneEnter(ZoneEnterEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
+
+        CompassTargets.changeModeForPlayer(player, CompassMode.TARGET);
 //        boolean isCompass = false;
 //        for (ItemStack item : player.getInventory().getContents()) {
 //            if (item != null && item.getType() == Material.COMPASS) {
@@ -48,6 +52,8 @@ public class CompassNoiseListener implements Listener {
     @EventHandler
     public void onZoneExit(ZoneExitEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
+
+        CompassTargets.changeModeForPlayer(player, CompassMode.SELF);
 
         UUID uuid = player.getUniqueId();
         Location basic = basicLocations.get(uuid);
