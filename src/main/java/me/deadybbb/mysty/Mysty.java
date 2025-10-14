@@ -4,6 +4,7 @@ import me.deadybbb.customzones.listeners.ZoneListenerRegistry;
 import me.deadybbb.mysty.clocknoise.ClockNoiseListener;
 import me.deadybbb.mysty.compasnoise.CompassNoiseListener;
 import me.deadybbb.mysty.items.CraftRegistry;
+import me.deadybbb.mysty.items.ItemsListener;
 import me.deadybbb.mysty.mobcontrol.BiobunkerListener;
 import me.deadybbb.mysty.mobcontrol.DrownedbunkerListener;
 import me.deadybbb.mysty.mobcontrol.NetherbunkerListener;
@@ -15,6 +16,7 @@ public final class Mysty extends PluginProvider {
     @Override
     public void onEnable() {
         CraftRegistry.registerItems(this);
+        this.getServer().getPluginManager().registerEvents(new ItemsListener(), this);
 
         ZoneListenerRegistry.registerListener(this, new CompassNoiseListener(this));
         ZoneListenerRegistry.registerListener(this, new ClockNoiseListener(this));
