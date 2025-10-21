@@ -16,7 +16,7 @@ public final class Mysty extends PluginProvider {
     @Override
     public void onEnable() {
         CraftRegistry.registerItems(this);
-        this.getServer().getPluginManager().registerEvents(new ItemsListener(), this);
+        getServer().getPluginManager().registerEvents(new ItemsListener(this), this);
 
         ZoneListenerRegistry.registerListener(this, new CompassNoiseListener(this));
         ZoneListenerRegistry.registerListener(this, new ClockNoiseListener(this));
