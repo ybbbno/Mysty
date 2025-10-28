@@ -1,6 +1,6 @@
 package me.deadybbb.mysty.items;
 
-import me.deadybbb.mysty.items.realisation.*;
+import me.deadybbb.mysty.items.instances.*;
 import me.deadybbb.ybmj.PluginProvider;
 import org.bukkit.inventory.ItemStack;
 

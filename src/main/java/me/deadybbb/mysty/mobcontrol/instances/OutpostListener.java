@@ -1,12 +1,16 @@
-package me.deadybbb.mysty.mobcontrol;
+package me.deadybbb.mysty.mobcontrol.instances;
 
 import me.deadybbb.customzones.Zone;
 import me.deadybbb.customzones.events.ZoneSpawnEvent;
 import me.deadybbb.customzones.events.ZoneTickEvent;
 import me.deadybbb.customzones.prefixes.CustomZonePrefix;
+import me.deadybbb.mysty.mobcontrol.Checker;
+import me.deadybbb.mysty.mobcontrol.MobController;
+import me.deadybbb.ybmj.PluginProvider;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Pillager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -14,12 +18,16 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import java.util.List;
 import java.util.Random;
 
-@CustomZonePrefix("biobunkerspawner")
-public class BiobunkerListener implements Listener {
+@CustomZonePrefix("outpostspawner")
+public class OutpostListener implements Listener {
 
-    private static final Random random = new Random();
-    private static final double SPAWN_CHANCE = 0.2;
     private static final int MAX_MOBS = 10;
+
+    private PluginProvider plugin;
+
+    public OutpostListener(PluginProvider plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onZoneSpawn(ZoneSpawnEvent event) {
@@ -35,19 +43,30 @@ public class BiobunkerListener implements Listener {
         Zone zone = event.getZone();
         World world = zone.min.getWorld();
 
+        if (!Checker.isPlayerNearby(zone, world)) {
+            return;
+        }
+
         long monsterCount = event.getEntitiesInZone().size();
         if (monsterCount >= MAX_MOBS) {
             return;
         }
 
-        if (random.nextDouble() > SPAWN_CHANCE) {
+        if (Checker.isSpawnChance(7)) {
             return;
         }
 
-        EntityType mob = random.nextBoolean() ? EntityType.SLIME : EntityType.BOGGED;
-        List<Location> spawnLoc = MobController.findGroupSpawnLocations(zone, mob, false);
+        Pillager p = null;
+        EntityType mob = EntityType.PILLAGER;
+        List<Location> spawnLoc = MobController.findGroupSpawnLocations(zone, mob, 3, true);
         for (Location loc : spawnLoc) {
-            world.spawnEntity(loc, mob, CreatureSpawnEvent.SpawnReason.CUSTOM);
+            p = (Pillager) world.spawnEntity(loc, mob, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        }
+
+        if (Checker.random.nextDouble() <= 0.06 && p != null) {
+            p.setPatrolLeader(true);
         }
     }
+
+
 }

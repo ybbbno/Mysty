@@ -1,4 +1,4 @@
-package me.deadybbb.mysty.items.realisation;
+package me.deadybbb.mysty.items.instances;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import me.deadybbb.mysty.items.CustomItem;

@@ -1,4 +1,4 @@
-package me.deadybbb.mysty.items.realisation;
+package me.deadybbb.mysty.items.instances;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.Equippable;
@@ -8,8 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ShapedRecipe;
-
-import java.util.List;
 
 public class Respirator extends CustomItem {
     private static final NamespacedKey MODEL_0 = new NamespacedKey("mysty", "resp");

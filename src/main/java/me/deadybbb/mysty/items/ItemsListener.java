@@ -1,20 +1,16 @@
 package me.deadybbb.mysty.items;
 
 import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.CustomModelData;
-import me.deadybbb.mysty.items.realisation.Respirator;
+import me.deadybbb.mysty.items.instances.Respirator;
 import me.deadybbb.ybmj.PluginProvider;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BundleMeta;
 
@@ -176,6 +172,33 @@ public class ItemsListener implements Listener {
             if (item != null && CraftRegistry.isItemEqual(item, "resp")) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPrepareItemCraft(PrepareItemCraftEvent event) {
+        CraftingInventory inv = event.getInventory();
+        ItemStack result = inv.getResult();
+
+        if (result == null || result.getType() == Material.AIR) {
+            return;
+        }
+
+        boolean hasResp = false;
+        boolean hasDye = false;
+
+        for (ItemStack item : inv.getMatrix()) {
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            if (CraftRegistry.isItemEqual(item, "resp")) {
+                hasResp = true;
+            } else if (item.getType().name().toLowerCase().contains("dye")) {
+                hasDye = true;
+            }
+        }
+
+        if (hasResp && hasDye) {
+            inv.setResult(new ItemStack(Material.AIR));
         }
     }
 

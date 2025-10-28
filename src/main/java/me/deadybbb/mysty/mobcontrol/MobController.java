@@ -2,8 +2,10 @@ package me.deadybbb.mysty.mobcontrol;
 
 import me.deadybbb.customzones.Zone;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -11,9 +13,11 @@ import java.util.*;
 
 public class MobController {
     private static final Random random = new Random();
-    private static final int MAX_ATTEMPTS = 10;
+    private static final int MAX_ATTEMPTS = 20;
+
     private static final Map<EntityType, EntitySize> ENTITY_SIZES = new HashMap<>();
     private static final Map<EntityType, Integer> ENTITY_LIGHT_LEVELS = new HashMap<>();
+    private static final Map<EntityType, Boolean> ENTITY_SKY_LIGHT = new HashMap<>();
 
     static {
         ENTITY_SIZES.put(EntityType.SLIME, new EntitySize(2.04, 2.04, 2.04));
@@ -24,9 +28,11 @@ public class MobController {
 
         ENTITY_LIGHT_LEVELS.put(EntityType.SLIME, 0);
         ENTITY_LIGHT_LEVELS.put(EntityType.PILLAGER, 8);
+
+        ENTITY_SKY_LIGHT.put(EntityType.PILLAGER, true);
     }
 
-    public static List<Location> findGroupSpawnLocations(Zone zone, EntityType entity, boolean isBorder) {
+    public static List<Location> findGroupSpawnLocations(Zone zone, EntityType entity, int max_in_group, boolean isBorder) {
         double minXd = Math.min(zone.min.getX(), zone.max.getX());
         double maxXd = Math.max(zone.min.getX(), zone.max.getX());
         double minZd = Math.min(zone.min.getZ(), zone.max.getZ());
@@ -34,7 +40,7 @@ public class MobController {
 
         List<Location> spawnLocations = new ArrayList<>();
 
-        int groupSize = random.nextInt(3) + 1;
+        int groupSize = random.nextInt(max_in_group);
 
         Location initialLocation;
         if (isBorder) {
@@ -79,17 +85,35 @@ public class MobController {
         double minZd = Math.min(zone.min.getZ(), zone.max.getZ());
         double maxZd = Math.max(zone.min.getZ(), zone.max.getZ());
 
+        // Расширяем границы для проверки
+        double expandedMinXd = minXd - 1;
+        double expandedMaxXd = maxXd + 1;
+        double expandedMinZd = minZd - 1;
+        double expandedMaxZd = maxZd + 1;
+
         double centerX = (minXd + maxXd) / 2;
         double centerZ = (minZd + maxZd) / 2;
-        double radiusX = (maxXd - minXd) / 2;
-        double radiusZ = (maxZd - minZd) / 2;
+        double baseRadiusX = (maxXd - minXd) / 2;
+        double baseRadiusZ = (maxZd - minZd) / 2;
 
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             double theta = random.nextDouble() * 2 * Math.PI;
-            double x = centerX + radiusX * Math.cos(theta);
-            double z = centerZ + radiusZ * Math.sin(theta);
+            // Случайное отклонение радиуса в диапазоне [-1, +1]
+            double radiusOffsetX = random.nextDouble() * 2 - 1; // От -1 до +1
+            double radiusOffsetZ = random.nextDouble() * 2 - 1; // От -1 до +1
+            double adjustedRadiusX = baseRadiusX + radiusOffsetX;
+            double adjustedRadiusZ = baseRadiusZ + radiusOffsetZ;
 
-            if (x < minXd || x > maxXd || z < minZd || z > maxZd) {
+            // Убедимся, что радиус не становится отрицательным
+            if (adjustedRadiusX <= 0 || adjustedRadiusZ <= 0) {
+                continue;
+            }
+
+            double x = centerX + adjustedRadiusX * Math.cos(theta);
+            double z = centerZ + adjustedRadiusZ * Math.sin(theta);
+
+            // Проверяем расширенные границы
+            if (x < expandedMinXd || x > expandedMaxXd || z < expandedMinZd || z > expandedMaxZd) {
                 continue;
             }
 
@@ -154,17 +178,34 @@ public class MobController {
         // Assuming a typical monster height of 2 blocks
         EntitySize size = ENTITY_SIZES.getOrDefault(entity, new EntitySize(0.6, 2.0, 0.6));
         int light_level = ENTITY_LIGHT_LEVELS.getOrDefault(entity, 0);
+        boolean sky_light = !ENTITY_SKY_LIGHT.getOrDefault(entity, false);
 
         // Check below is solid
         Block below = world.getBlockAt(bx, by - 1, bz);
-        if (!below.getType().isSolid()) {
-            return false;
+
+        if (entity != EntityType.DROWNED) {
+            if (!below.getType().isSolid() || below.getType().name().toLowerCase().contains("leaves")) {
+                return false;
+            }
         }
 
-        // Check light level at the block where the entity will spawn
+        // Check light levels
         Block spawnBlock = world.getBlockAt(bx, by, bz);
-        if (spawnBlock.getLightLevel() > light_level) {
-            return false;
+
+        int blockLight = spawnBlock.getLightFromBlocks();
+        int skyLight = spawnBlock.getLightFromSky();
+
+        // Если моб НЕ может спавниться при дневном свете
+        if (sky_light) {
+            // Должен быть нулевой sky light И block light <= разрешенного уровня
+            if (skyLight > 0 || blockLight > light_level) {
+                return false;
+            }
+        } else {
+            // Может спавниться при любом освещении, только block light <= разрешенного уровня
+            if (blockLight > light_level) {
+                return false;
+            }
         }
 
         // Check the entity space is air
@@ -176,7 +217,14 @@ public class MobController {
             for (int xOffset = -widthXBlocks; xOffset <= widthXBlocks; xOffset++) {
                 for (int zOffset = -widthZBlocks; zOffset <= widthZBlocks; zOffset++) {
                     Block space = world.getBlockAt(bx + xOffset, by + y, bz + zOffset);
+                    if (space.getType() == Material.WATER && entity == EntityType.DROWNED) {
+                        return true;
+                    }
                     if (!space.getType().isAir()) {
+                        String name = space.getType().name().toLowerCase();
+                        if (name.contains("grass")) {
+                            return !name.contains("block");
+                        }
                         return false;
                     }
                 }
