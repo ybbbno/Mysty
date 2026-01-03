@@ -27,11 +27,9 @@ public class drowned_bunker_first implements Listener {
 
     @EventHandler
     public void onZoneSpawn(ZoneSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
-            return;
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+            event.setCancelled(true);
         }
-
-        event.setCancelled(true);
     }
 
     @EventHandler
@@ -43,8 +41,8 @@ public class drowned_bunker_first implements Listener {
             return;
         }
 
-        int entitiesCount = event.getEntitiesInZone().size();
-        if (entitiesCount > MAX_ENTITIES) {
+        int entitiesCount = Checker.getCountEntitiesWithoutPlayer(event.getEntitiesUUIDsInZone());
+        if (entitiesCount >= MAX_ENTITIES) {
             return;
         }
 
@@ -66,7 +64,5 @@ public class drowned_bunker_first implements Listener {
             en.getEquipment().setItemInMainHand(null);
             en.getEquipment().setItemInOffHand(null);
         }
-
-        return;
     }
 }

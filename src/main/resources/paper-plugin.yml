@@ -1,5 +1,5 @@
 name: Mysty
-version: '0.1'
+version: '0.1.1'
 main: me.deadybbb.mysty.Mysty
 api-version: '1.21'
 authors: [ Ybbb ]
@@ -13,5 +13,18 @@ dependencies:
       load: BEFORE
       required: true
     CompassTargets:
+      load: BEFORE
+      required: true
+    ProtocolLib:
+      load: BEFORE
+      required: true
+    CommandAPI:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    CustomSounds:
+      load: BEFORE
+      required: true
+    voicechat:
       load: BEFORE
       required: true

@@ -40,8 +40,7 @@ public class portal_bunker_first implements Listener {
             return;
         }
 
-        int entitiesCount = Math.toIntExact(event.getEntitiesInZone().stream()
-                .filter(entity -> entity.getType() != EntityType.PLAYER).count());
+        int entitiesCount = Checker.getCountEntitiesWithoutPlayer(event.getEntitiesUUIDsInZone());
         if (entitiesCount > MAX_ENTITIES) {
             return;
         }
@@ -62,7 +61,5 @@ public class portal_bunker_first implements Listener {
         for (Location loc : spawnLoc) {
             world.spawnEntity(loc, mob, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }
-
-        return;
     }
 }

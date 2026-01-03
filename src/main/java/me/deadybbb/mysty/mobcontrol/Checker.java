@@ -1,17 +1,22 @@
 package me.deadybbb.mysty.mobcontrol;
 
 import me.deadybbb.customzones.Zone;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 public class Checker {
     public static final Random random = new Random();
-    private static final double DETECTION_RADIUS = 64.0;
+    private static final double DETECTION_RADIUS = 128.0;
 
     public static EntityType chooseEntity(List<EntityType> entities) {
         return entities.get(random.nextInt(entities.size()));
@@ -51,5 +56,11 @@ public class Checker {
         double centerZ = (zone.min.getZ() + zone.max.getZ()) / 2.0;
 
         return new Location(zone.min.getWorld(), centerX, centerY, centerZ);
+    }
+
+    public static int getCountEntitiesWithoutPlayer(List<UUID> entities) {
+        return Math.toIntExact(entities.stream()
+                .map(Bukkit::getEntity).filter(Objects::nonNull)
+                .filter(entity -> entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity).count());
     }
 }

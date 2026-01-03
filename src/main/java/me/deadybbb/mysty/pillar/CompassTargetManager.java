@@ -1,4 +1,4 @@
-package me.deadybbb.mysty.compasnoise;
+package me.deadybbb.mysty.pillar;
 
 import me.deadybbb.ybmj.PluginProvider;
 import org.bukkit.Location;

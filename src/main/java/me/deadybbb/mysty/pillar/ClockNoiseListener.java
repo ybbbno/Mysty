@@ -1,9 +1,10 @@
-package me.deadybbb.mysty.clocknoise;
+package me.deadybbb.mysty.pillar;
 
 import me.deadybbb.customzones.events.ZoneEnterEvent;
 import me.deadybbb.customzones.events.ZoneExitEvent;
 import me.deadybbb.customzones.prefixes.CustomZonePrefix;
 import me.deadybbb.ybmj.PluginProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,7 +26,7 @@ public class ClockNoiseListener implements Listener {
 
     @EventHandler
     public void onZoneEnter(ZoneEnterEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(Bukkit.getEntity(event.getEntityUUID()) instanceof Player player)) return;
 
         UUID uuid = player.getUniqueId();
         // Cancel any existing task for this player
@@ -51,7 +52,7 @@ public class ClockNoiseListener implements Listener {
 
     @EventHandler
     public void onZoneExit(ZoneExitEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(Bukkit.getEntity(event.getEntityUUID()) instanceof Player player)) return;
 
         UUID uuid = player.getUniqueId();
         if (playerTasks.containsKey(uuid)) {

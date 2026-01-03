@@ -1,0 +1,4 @@
+permissions:
+  mysty.fog:
+    description: Управление туманом
+    default: op

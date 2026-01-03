@@ -24,13 +24,10 @@ public class drowned_bunker_third implements Listener {
 
     @EventHandler
     public void onZoneSpawn(ZoneSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
-            return;
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+            event.setCancelled(true);
         }
-
-        event.setCancelled(true);
     }
-
     @EventHandler
     public void onZoneTick(ZoneTickEvent event) {
         Zone zone = event.getZone();
@@ -40,8 +37,8 @@ public class drowned_bunker_third implements Listener {
             return;
         }
 
-        int entitiesCount = event.getEntitiesInZone().size();
-        if (entitiesCount > MAX_ENTITIES) {
+        int entitiesCount = Checker.getCountEntitiesWithoutPlayer(event.getEntitiesUUIDsInZone());
+        if (entitiesCount >= MAX_ENTITIES) {
             return;
         }
 
@@ -61,7 +58,5 @@ public class drowned_bunker_third implements Listener {
         for (Location loc : spawnLoc) {
             world.spawnEntity(loc, mob, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }
-
-        return;
     }
 }

@@ -6,6 +6,7 @@ import me.deadybbb.customzones.events.ZoneTickEvent;
 import me.deadybbb.customzones.prefixes.CustomZonePrefix;
 import me.deadybbb.mysty.mobcontrol.Checker;
 import me.deadybbb.mysty.mobcontrol.MobController;
+import me.deadybbb.ybmj.PluginProvider;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -24,11 +25,9 @@ public class bio_bunker_first implements Listener {
 
     @EventHandler
     public void onZoneSpawn(ZoneSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
-            return;
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+            event.setCancelled(true);
         }
-
-        event.setCancelled(true);
     }
 
     @EventHandler
@@ -40,8 +39,8 @@ public class bio_bunker_first implements Listener {
             return;
         }
 
-        int entitiesCount = event.getEntitiesInZone().size();
-        if (entitiesCount > MAX_ENTITIES) {
+        int entitiesCount = Checker.getCountEntitiesWithoutPlayer(event.getEntitiesUUIDsInZone());
+        if (entitiesCount >= MAX_ENTITIES) {
             return;
         }
 
@@ -61,7 +60,5 @@ public class bio_bunker_first implements Listener {
         for (Location loc : spawnLoc) {
             world.spawnEntity(loc, mob, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }
-
-        return;
     }
 }

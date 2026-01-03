@@ -1,24 +1,31 @@
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm'
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
 
 group = 'me.deadybbb'
-version = '0.1'
+version = '0.1.1'
 
 repositories {
     mavenCentral()
     maven {
-        name = "papermc-repo"
-        url = "https://repo.papermc.io/repository/maven-public/"
+        url "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        url "https://maven.maxhenkel.de/repository/public/"
     }
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     compileOnly(files("./libs/YBMJ-0.1.1.jar"))
-    compileOnly(files("./libs/CustomZones-0.1.jar"))
+    compileOnly(files("./libs/CustomZones-0.1.1.jar"))
     compileOnly(files("./libs/CompassTargets-0.1.1.jar"))
+    compileOnly(files("./libs/CustomSounds-0.1-all.jar"))
+    compileOnly "de.maxhenkel.voicechat:voicechat-api:2.5.27"
+    compileOnly 'net.dmulloy2:ProtocolLib:5.4.0'
+    compileOnly "dev.jorel:commandapi-paper-core:11.0.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
@@ -29,6 +36,7 @@ java {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
 }
+
 kotlin {
     jvmToolchain(21)
 }

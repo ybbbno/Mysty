@@ -21,21 +21,15 @@ import java.util.Random;
 @CustomZonePrefix("outpostspawner")
 public class OutpostListener implements Listener {
 
-    private static final int MAX_MOBS = 10;
-
-    private PluginProvider plugin;
-
-    public OutpostListener(PluginProvider plugin) {
-        this.plugin = plugin;
-    }
+    private static final int MAX_MOBS_PER_GROUP = 3;
+    private static final int MAX_ENTITIES = 10;
+    private static final double CHANCE_PER_MINUTE = 7.0;
 
     @EventHandler
     public void onZoneSpawn(ZoneSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
-            return;
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+            event.setCancelled(true);
         }
-
-        event.setCancelled(true);
     }
 
     @EventHandler
@@ -47,18 +41,25 @@ public class OutpostListener implements Listener {
             return;
         }
 
-        long monsterCount = event.getEntitiesInZone().size();
-        if (monsterCount >= MAX_MOBS) {
+        int entitiesCount = Checker.getCountEntitiesWithoutPlayer(event.getEntitiesUUIDsInZone());
+        if (entitiesCount >= MAX_ENTITIES) {
             return;
         }
 
-        if (Checker.isSpawnChance(7)) {
+        if (Checker.isSpawnChance(CHANCE_PER_MINUTE)) {
             return;
         }
 
         Pillager p = null;
         EntityType mob = EntityType.PILLAGER;
-        List<Location> spawnLoc = MobController.findGroupSpawnLocations(zone, mob, 3, true);
+
+        int max_mobs_per_group = MAX_MOBS_PER_GROUP;
+        int range = MAX_ENTITIES - entitiesCount;
+        if (max_mobs_per_group >= range) {
+            max_mobs_per_group = range;
+        }
+
+        List<Location> spawnLoc = MobController.findGroupSpawnLocations(zone, mob, max_mobs_per_group, true);
         for (Location loc : spawnLoc) {
             p = (Pillager) world.spawnEntity(loc, mob, CreatureSpawnEvent.SpawnReason.CUSTOM);
         }

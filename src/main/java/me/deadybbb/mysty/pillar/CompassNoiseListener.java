@@ -1,20 +1,16 @@
-package me.deadybbb.mysty.compasnoise;
+package me.deadybbb.mysty.pillar;
 
 import me.deadybbb.compasstargets.CompassMode;
 import me.deadybbb.compasstargets.CompassTargets;
 import me.deadybbb.customzones.events.ZoneEnterEvent;
 import me.deadybbb.customzones.events.ZoneExitEvent;
-import me.deadybbb.customzones.events.ZoneStayEvent;
-import me.deadybbb.customzones.events.ZoneTickEvent;
 import me.deadybbb.customzones.prefixes.CustomZonePrefix;
 import me.deadybbb.ybmj.PluginProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -31,7 +27,7 @@ public class CompassNoiseListener implements Listener {
 
     @EventHandler
     public void onZoneEnter(ZoneEnterEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(Bukkit.getEntity(event.getEntityUUID()) instanceof Player player)) return;
 
         CompassTargets.changeModeForPlayer(player, CompassMode.TARGET);
 //        boolean isCompass = false;
@@ -51,7 +47,7 @@ public class CompassNoiseListener implements Listener {
 
     @EventHandler
     public void onZoneExit(ZoneExitEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
+        if (!(Bukkit.getEntity(event.getEntityUUID()) instanceof Player player)) return;
 
         CompassTargets.changeModeForPlayer(player, CompassMode.SELF);
 
